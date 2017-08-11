@@ -2402,17 +2402,17 @@ func (g *Generator) generateMessage(message *Descriptor) {
 			case descriptor.FieldDescriptorProto_TYPE_DOUBLE:
 				dec, cast = "b.DecodeFixed64()", g.Pkg["math"]+".Float64frombits"
 			case descriptor.FieldDescriptorProto_TYPE_FLOAT:
-				dec, cast, cast2 = "b.DecodeFixed32()", "uint32", g.Pkg["math"]+".Float32frombits"
+				dec, cast, cast2 = "b.DecodeFixed32()", "int", g.Pkg["math"]+".Float32frombits"
 			case descriptor.FieldDescriptorProto_TYPE_INT64:
-				dec, cast = "b.DecodeVarint()", "int64"
+				dec, cast = "b.DecodeVarint()", "int"
 			case descriptor.FieldDescriptorProto_TYPE_UINT64:
 				dec = "b.DecodeVarint()"
 			case descriptor.FieldDescriptorProto_TYPE_INT32:
-				dec, cast = "b.DecodeVarint()", "int32"
+				dec, cast = "b.DecodeVarint()", "int"
 			case descriptor.FieldDescriptorProto_TYPE_FIXED64:
 				dec = "b.DecodeFixed64()"
 			case descriptor.FieldDescriptorProto_TYPE_FIXED32:
-				dec, cast = "b.DecodeFixed32()", "uint32"
+				dec, cast = "b.DecodeFixed32()", "int"
 			case descriptor.FieldDescriptorProto_TYPE_BOOL:
 				dec = "b.DecodeVarint()"
 				// handled specially below
@@ -2431,17 +2431,17 @@ func (g *Generator) generateMessage(message *Descriptor) {
 			case descriptor.FieldDescriptorProto_TYPE_BYTES:
 				dec = "b.DecodeRawBytes(true)"
 			case descriptor.FieldDescriptorProto_TYPE_UINT32:
-				dec, cast = "b.DecodeVarint()", "uint32"
+				dec, cast = "b.DecodeVarint()", "int"
 			case descriptor.FieldDescriptorProto_TYPE_ENUM:
 				dec, cast = "b.DecodeVarint()", fieldTypes[field]
 			case descriptor.FieldDescriptorProto_TYPE_SFIXED32:
-				dec, cast = "b.DecodeFixed32()", "int32"
+				dec, cast = "b.DecodeFixed32()", "int"
 			case descriptor.FieldDescriptorProto_TYPE_SFIXED64:
-				dec, cast = "b.DecodeFixed64()", "int64"
+				dec, cast = "b.DecodeFixed64()", "int"
 			case descriptor.FieldDescriptorProto_TYPE_SINT32:
-				dec, cast = "b.DecodeZigzag32()", "int32"
+				dec, cast = "b.DecodeZigzag32()", "int"
 			case descriptor.FieldDescriptorProto_TYPE_SINT64:
-				dec, cast = "b.DecodeZigzag64()", "int64"
+				dec, cast = "b.DecodeZigzag64()", "int"
 			default:
 				g.Fail("unhandled oneof field type ", field.Type.String())
 			}
