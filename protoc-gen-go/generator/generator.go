@@ -1632,6 +1632,64 @@ func (g *Generator) GoType(message *Descriptor, field *descriptor.FieldDescripto
 	case descriptor.FieldDescriptorProto_TYPE_FLOAT:
 		typ, wire = "float32", "fixed32"
 	case descriptor.FieldDescriptorProto_TYPE_INT64:
+		typ, wire = "int", "varint"
+	case descriptor.FieldDescriptorProto_TYPE_UINT64:
+		typ, wire = "int", "varint"
+	case descriptor.FieldDescriptorProto_TYPE_INT32:
+		typ, wire = "int", "varint"
+	case descriptor.FieldDescriptorProto_TYPE_UINT32:
+		typ, wire = "int", "varint"
+	case descriptor.FieldDescriptorProto_TYPE_FIXED64:
+		typ, wire = "int", "fixed64"
+	case descriptor.FieldDescriptorProto_TYPE_FIXED32:
+		typ, wire = "int", "fixed32"
+	case descriptor.FieldDescriptorProto_TYPE_BOOL:
+		typ, wire = "bool", "varint"
+	case descriptor.FieldDescriptorProto_TYPE_STRING:
+		typ, wire = "string", "bytes"
+	case descriptor.FieldDescriptorProto_TYPE_GROUP:
+		desc := g.ObjectNamed(field.GetTypeName())
+		typ, wire = "*"+g.TypeName(desc), "group"
+	case descriptor.FieldDescriptorProto_TYPE_MESSAGE:
+		desc := g.ObjectNamed(field.GetTypeName())
+		typ, wire = "*"+g.TypeName(desc), "bytes"
+	case descriptor.FieldDescriptorProto_TYPE_BYTES:
+		typ, wire = "[]byte", "bytes"
+	case descriptor.FieldDescriptorProto_TYPE_ENUM:
+		desc := g.ObjectNamed(field.GetTypeName())
+		typ, wire = g.TypeName(desc), "varint"
+	case descriptor.FieldDescriptorProto_TYPE_SFIXED32:
+		typ, wire = "int", "fixed32"
+	case descriptor.FieldDescriptorProto_TYPE_SFIXED64:
+		typ, wire = "int", "fixed64"
+	case descriptor.FieldDescriptorProto_TYPE_SINT32:
+		typ, wire = "int", "zigzag32"
+	case descriptor.FieldDescriptorProto_TYPE_SINT64:
+		typ, wire = "int", "zigzag64"
+	default:
+		g.Fail("unknown type for", field.GetName())
+	}
+	if isRepeated(field) {
+		typ = "[]" + typ
+	} else if message != nil && message.proto3() {
+		return
+	} else if field.OneofIndex != nil && message != nil {
+		return
+	} else if needsStar(*field.Type) {
+		typ = "*" + typ
+	}
+	return
+}
+
+// GoType returns a string representing the type name, and the wire type
+func (g *Generator) GoType____BK(message *Descriptor, field *descriptor.FieldDescriptorProto) (typ string, wire string) {
+	// TODO: Options.
+	switch *field.Type {
+	case descriptor.FieldDescriptorProto_TYPE_DOUBLE:
+		typ, wire = "float64", "fixed64"
+	case descriptor.FieldDescriptorProto_TYPE_FLOAT:
+		typ, wire = "float32", "fixed32"
+	case descriptor.FieldDescriptorProto_TYPE_INT64:
 		typ, wire = "int64", "varint"
 	case descriptor.FieldDescriptorProto_TYPE_UINT64:
 		typ, wire = "uint64", "varint"
@@ -1680,7 +1738,6 @@ func (g *Generator) GoType(message *Descriptor, field *descriptor.FieldDescripto
 	}
 	return
 }
-
 func (g *Generator) RecordTypeUse(t string) {
 	if obj, ok := g.typeNameToObject[t]; ok {
 		// Call ObjectNamed to get the true object to record the use.
